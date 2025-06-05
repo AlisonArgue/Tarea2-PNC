@@ -15,7 +15,7 @@ public class CommentsController {
     @Autowired
     private CommentService commentService;
 
-    @PostMapping
+    @PostMapping("/comments")
     public ResponseEntity<Void> createComment(@RequestBody CreateCommentDto request){
         commentService.createComment(request);
         return ResponseEntity.noContent().build();
