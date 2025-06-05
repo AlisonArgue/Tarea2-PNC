@@ -83,6 +83,19 @@ public class PostService {
         postRepository.save(optionalPost.get());
     }
 
+    public void dislikePost(UUID userId, UUID postId){
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()){
+            throw new RuntimeException("User not found");
+        }
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isEmpty()){
+            throw new RuntimeException("Post not found");
+        }
+        optionalPost.get().getLikes().add(optionalUser.get());
+        postRepository.save(optionalPost.get());
+    }
+
     public List<Post> getLikedPosts(UUID userId){
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()){

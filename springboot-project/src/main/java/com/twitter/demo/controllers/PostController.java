@@ -27,4 +27,10 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/dislikes")
+    public ResponseEntity<Void> dislikePost(@RequestBody LikeDto info){
+        postService.dislikePost(info.getUserId(), info.getPostId());
+        return ResponseEntity.noContent().build();
+    }
+
 }
