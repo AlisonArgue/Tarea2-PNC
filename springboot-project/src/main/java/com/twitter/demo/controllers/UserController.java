@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -24,8 +26,9 @@ public class UserController {
     @Autowired
     private PostService postService;
 
-        priv2569ate Pattern UUID_REGEX = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
+    private Pattern UUID_REGEX = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
 
+    /*
     @PostMapping("/register")
     public ResponseEntity<Void> createUser(@RequestBody @Valid RegisterDto info){
         try {
@@ -34,6 +37,16 @@ public class UserController {
         } catch (Exception e){
             return ResponseEntity.badRequest().build();
         }
+    }
+
+ */
+
+    @PostMapping(path = "/register", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Map<String, String>> createUser(@RequestBody @Valid RegisterDto info) {
+        String token = userService.createUser(info);
+        Map<String, String> respuesta = new HashMap<>();
+        respuesta.put("token", token);
+        return ResponseEntity.ok(respuesta);
     }
 
     @PutMapping("/users/update/{id}")
@@ -46,18 +59,6 @@ public class UserController {
         }
     }
 
-/*
-    @DeleteMapping("/users/delete")
-    public ResponseEntity<Void> deleteUser(@RequestBody DeleteDto deleteDto) {
-        try {
-            userService.deleteUser(deleteDto.getId());
-            return ResponseEntity.ok().build();
-        } catch (Exception e){
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
- */
     @DeleteMapping("/users/{id}")
     public void deleteUser(@PathVariable("id") UUID id) {
         userService.deleteUser(id);

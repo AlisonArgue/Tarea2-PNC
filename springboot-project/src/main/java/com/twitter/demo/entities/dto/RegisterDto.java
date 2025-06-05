@@ -3,20 +3,23 @@ package com.twitter.demo.entities.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
+@NoArgsConstructor
 public class RegisterDto {
 
     @NotBlank
-    @NotNull
+    //@NotNull
     private String name;
 
     @NotBlank
-    @NotNull
+    //@NotNull
     private String email;
 
     @NotBlank
-    @NotNull
+   // @NotNull
     private String password;
 }

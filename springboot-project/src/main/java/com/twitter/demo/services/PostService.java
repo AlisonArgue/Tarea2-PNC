@@ -6,6 +6,7 @@ import com.twitter.demo.entities.dto.CreatePostDto;
 import com.twitter.demo.entities.dto.UserPostsDto;
 import com.twitter.demo.repositories.PostRepository;
 import com.twitter.demo.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Transactional
 @Service
 public class PostService {
 
@@ -36,15 +38,22 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public void deletePost(UUID postId) {
-        Optional<Post> optionalPost = userRepository.findById(postId);
-        if (optionalPost.isEmpty()){
-
-        } else {
-            User user = optionalPost.get();
-            userRepository.optionalPost(post.getId());
-
+    public void deleteUserPost(UUID userId, UUID postId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("User not found");
         }
+
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isEmpty()) {
+            throw new RuntimeException("Post not found");
+        }
+
+        Post post = optionalPost.get();
+        if (!post.getAuthor().getId().equals(userId)) {
+            throw new RuntimeException("This post does not belong to the user");
+        }
+        postRepository.delete(post);
     }
 
     public List<UserPostsDto> getUserPosts(UUID userId){

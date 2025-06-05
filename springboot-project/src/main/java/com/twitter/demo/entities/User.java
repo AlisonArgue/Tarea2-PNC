@@ -22,6 +22,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "token")
+    private String token;
+
     @Column(name = "username", nullable = false)
     private String name;
 

@@ -11,5 +11,6 @@ import java.util.UUID;
 @Data
 public class DeleteDto {
     private UUID id;
+    private UUID userId;
 }
 

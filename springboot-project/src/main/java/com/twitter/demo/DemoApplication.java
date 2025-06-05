@@ -14,5 +14,5 @@ public class DemoApplication {
 		user.setName("Test");
 		System.out.println(user.getName());
 	}
-
+// spring.jpa.hibernate.ddl-auto=create-drop
 }

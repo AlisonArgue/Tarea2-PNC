@@ -4,11 +4,18 @@ import com.twitter.demo.entities.User;
 import com.twitter.demo.entities.dto.RegisterDto;
 import com.twitter.demo.entities.dto.UserDto;
 import com.twitter.demo.repositories.UserRepository;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import jakarta.transaction.Transactional;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,12 +28,29 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public void createUser(RegisterDto userInfo) {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    private final String SECRET_KEY = "no-se-que-poner-xd-10-help-123456";
+
+    public String createUser(RegisterDto userInfo) {
+        SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+
+        String token = Jwts.builder()
+                .setSubject(userInfo.getEmail())
+                .setIssuedAt(new Date())
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
         User user = new User();
+        user.setToken(token);
         user.setName(userInfo.getName());
         user.setEmail(userInfo.getEmail());
-        user.setPassword(userInfo.getPassword());
+        // user.setPassword(userInfo.getPassword());
+        user.setPassword(passwordEncoder.encode(userInfo.getPassword()));
         userRepository.save(user);
+
+        return token;
     }
 
     public void deleteUser(UUID id) {
@@ -50,7 +74,7 @@ public class UserService {
             user.setName(newName);
             user.setEmail(neEmail);
             user.setPassword(newPwr);
-           User actu = userRepository.save(user);
+            userRepository.save(user);
 
         }
     }
